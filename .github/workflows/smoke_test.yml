@@ -1,0 +1,36 @@
+name: Smoke test
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  label-smoke-test:
+    name: Read PR labels with local build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Run action from working tree
+        id: labels
+        uses: ./
+
+      - name: Show exported label variables
+        run: env | grep '^GITHUB_PR_LABEL_' || echo 'No label variables exported'
+
+      - name: Show action outputs
+        env:
+          LABELS: ${{ steps.labels.outputs.labels }}
+          LABELS_OBJECT: ${{ steps.labels.outputs.labels-object }}
+        run: |
+          echo "labels=[$LABELS]"
+          echo "labels-object=$LABELS_OBJECT"
+
+      - name: Branch on enhancement label
+        if: contains(steps.labels.outputs.labels, ' enhancement ')
+        run: echo 'Detected the enhancement label.'

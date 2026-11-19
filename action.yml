@@ -1,0 +1,17 @@
+name: 'PR labels'
+author: 'step-security'
+description: 'Reads the labels of the triggering pull request and exposes them as step outputs and GITHUB_PR_LABEL_* environment variables.'
+
+outputs:
+  labels:
+    description: 'Space-delimited label slugs with a leading and trailing space (e.g. " bug needs-review "), suitable for contains().'
+  labels-object:
+    description: 'JSON object mapping each label slug to true; null when the event is not a pull request.'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'bookmark'
+  color: 'blue'
